@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MBBS Academic Screen + UCAT (2026)</title>
+  <!-- Tailwind (Play CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-900">
+  <main class="mx-auto max-w-5xl p-6 sm:p-10">
+    <section class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div class="px-6 py-5 sm:px-8 sm:py-6">
+        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">MBBS Academic Screen + UCAT (2026)</h1>
+      </div>
+      <div class="px-6 pb-6 sm:px-8 sm:pb-8">
+        <!-- Grid: Route + UCAT / A level -->
+        <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+          <!-- Route -->
+          <div>
+            <label for="route" class="mb-1 block text-sm font-semibold text-slate-700">Route</label>
+            <select id="route" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm shadow-sm focus:border-blue-300 focus:outline-none focus:ring-4 focus:ring-blue-200/50">
+              <option value="alevel">A levels + GCSE</option>
+              <option value="degree">Degree route</option>
+            </select>
+          </div>
+
+          <!-- UCAT -->
+          <div>
+            <label for="ucat" class="mb-1 block text-sm font-semibold text-slate-700">UCAT total</label>
+            <input id="ucat" type="number" inputmode="numeric" placeholder="e.g. 2390" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm shadow-sm placeholder:text-slate-400 focus:border-blue-300 focus:outline-none focus:ring-4 focus:ring-blue-200/50">
+          </div>
+        </div>
+
+        <!-- GCSE + A levels (shown for A level route) -->
+        <div id="alevel-section" class="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2">
+          <!-- GCSE -->
+          <div>
+            <label for="gcse" class="mb-1 block text-sm font-semibold text-slate-700">GCSE grades (comma-separated)</label>
+            <textarea id="gcse" placeholder="9,9,8,8,7,7,6,6,6" class="w-full min-h-12 rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm shadow-sm placeholder:text-slate-400 focus:border-blue-300 focus:outline-none focus:ring-4 focus:ring-blue-200/50"></textarea>
+            <p class="mt-1 text-xs text-slate-600">We count the <span class="font-semibold">best 8</span> (max 40). Extras are ignored automatically.</p>
+
+            <!-- Equivalents -->
+            <div class="mt-3 flex items-center gap-2">
+              <select id="gcse-equiv" class="w-full max-w-xs rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm shadow-sm focus:border-blue-300 focus:outline-none focus:ring-4 focus:ring-blue-200/50">
+                <option value="">Add equivalent…</option>
+                <optgroup label="National 5">
+                  <option value="NAT5_A*">A* (5)</option>
+                  <option value="NAT5_A">A (3)</option>
+                  <option value="NAT5_B">B (1)</option>
+                  <option value="NAT5_C">C (0)</option>
+                </optgroup>
+                <optgroup label="Old GCSE">
+                  <option value="OLD_A*">A* (5)</option>
+                  <option value="OLD_A">A (3)</option>
+                  <option value="OLD_B">B (1)</option>
+                  <option value="OLD_C">C (0)</option>
+                </optgroup>
+                <optgroup label="Irish Ordinary">
+                  <option value="IRL_O_A*">A* (5)</option>
+                  <option value="IRL_O_A">A (3)</option>
+                  <option value="IRL_O_B">B (1)</option>
+                  <option value="IRL_O_MERIT">C/Merit (0)</option>
+                </optgroup>
+              </select>
+              <button id="add-equiv" type="button" class="inline-flex items-center rounded-xl border border-slate-300 bg-slate-50 px-4 py-2 text-sm font-semibold shadow-sm hover:bg-slate-100 focus:outline-none focus:ring-4 focus:ring-blue-200/50">Add</button>
+            </div>
+            <div id="equiv-list" class="mt-2 text-sm text-slate-600">No equivalents added.</div>
+          </div>
+
+          <!-- A levels -->
+          <div id="alevel-row">
+            <label for="alevels" class="mb-1 block text-sm font-semibold text-slate-700">A level grades (comma-separated)</label>
+            <input id="alevels" placeholder="A*,A,A" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm shadow-sm placeholder:text-slate-400 focus:border-blue-300 focus:outline-none focus:ring-4 focus:ring-blue-200/50">
+            <p class="mt-1 text-xs text-slate-600">We count the <span class="font-semibold">top 3</span> (max 40). C and below score 0.</p>
+          </div>
+        </div>
+
+        <!-- Degree (shown for degree route) -->
+        <div id="degree-section" class="mt-6 hidden">
+          <label for="degree" class="mb-1 block text-sm font-semibold text-slate-700">Degree classification</label>
+          <select id="degree" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm shadow-sm focus:border-blue-300 focus:outline-none focus:ring-4 focus:ring-blue-200/50">
+            <option value="">Select…</option>
+            <option value="1st">First (1st)</option>
+            <option value="2:1">Upper Second (2:1)</option>
+            <option value="other">Other / below 2:1</option>
+          </select>
+        </div>
+
+        <!-- SJT + Calculate -->
+        <div class="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2">
+          <div>
+            <label for="sjt" class="mb-1 block text-sm font-semibold text-slate-700">SJT band (optional)</label>
+            <select id="sjt" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm shadow-sm focus:border-blue-300 focus:outline-none focus:ring-4 focus:ring-blue-200/50">
+              <option value="">Not provided</option>
+              <option value="1">Band 1</option>
+              <option value="2">Band 2</option>
+              <option value="3">Band 3</option>
+              <option value="4">Band 4 (ineligible)</option>
+            </select>
+          </div>
+          <div class="flex items-end justify-end">
+            <button id="calc" type="button" class="inline-flex items-center rounded-xl bg-slate-900 px-5 py-3 text-sm font-bold text-white shadow-sm hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-blue-200/50">Calculate</button>
+          </div>
+        </div>
+
+        <!-- Output -->
+        <div id="output" class="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm"></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+  // ---------- Policy mappings ----------
+  const GCSE_MAP = new Map([["9",5],["8",4],["7",3],["6",1],["5",0],["4",0],["3",0],["2",0],["1",0],["U",0]]);
+  const ALVL_MAP = new Map([["A*",16],["A",12],["B",8],["C",0],["D",0],["E",0],["U",0]]);
+  const GCSE_EQUIV = new Map([
+    ["NAT5_A*",5],["NAT5_A",3],["NAT5_B",1],["NAT5_C",0],
+    ["OLD_A*",5],["OLD_A",3],["OLD_B",1],["OLD_C",0],
+    ["IRL_O_A*",5],["IRL_O_A",3],["IRL_O_B",1],["IRL_O_MERIT",0]
+  ]);
+  const norm = x => String(x||"").toUpperCase().trim();
+
+  // ---------- Scoring ----------
+  function scoreGCSE(achieved, equivKeys){
+    const achievedPts = achieved.map(g => GCSE_MAP.get(norm(g)) ?? 0);
+    const equivPts    = equivKeys.map(k => GCSE_EQUIV.get(norm(k)) ?? 0);
+    const all         = achievedPts.concat(equivPts).filter(Number.isFinite).sort((a,b)=>b-a);
+    const used        = all.slice(0,8);
+    const ignored     = all.slice(8);
+    const points      = Math.min(40, used.reduce((a,b)=>a+b,0));
+    return {points, used, ignored};
+  }
+  function scoreALevel(grades){
+    const pts = grades.map(g => ALVL_MAP.get(norm(g)) ?? 0)
+      .filter(Number.isFinite).sort((a,b)=>b-a);
+    const used = pts.slice(0,3), ignored = pts.slice(3);
+    const points = Math.min(40, used.reduce((a,b)=>a+b,0));
+    return {points, used, ignored};
+  }
+  function scoreDegree(c){
+    const v = norm(c).replace(/\s/g,"");
+    if (["FIRST","1ST","ONE"].includes(v)) return 40;
+    if (["2:1","21","UPPERSECOND","UPPERSECONDCLASS","UPPER"].includes(v)) return 35;
+    return 0;
+  }
+  function ucatToPoints(total){
+    const t = Number(total);
+    if (!Number.isFinite(t)) return 0;
+    if (t >= 2400) return 60;
+    var pts = Math.floor((t - 1810) / 10) + 1;
+    return Math.max(1, pts);
+  }
+  function sjtBandPoints(band){
+    const b = norm(band).replace("BAND","");
+    if (b==="1") return {points:5, eligible:true};
+    if (b==="2") return {points:3, eligible:true};
+    if (b==="3") return {points:1, eligible:true};
+    if (b==="4") return {points:0, eligible:false};
+    return {points:0, eligible:true};
+  }
+
+  // ---------- UI helpers ----------
+  var equivKeys = [];
+  var equivSel  = document.getElementById("gcse-equiv");
+  var equivBtn  = document.getElementById("add-equiv");
+  var equivList = document.getElementById("equiv-list");
+
+  function parseCSV(v){ return (v||"").split(/[,;\s]+/).filter(Boolean); }
+  function chip(txt, ignored){
+    return '<span class="mr-2 mt-2 inline-block rounded-full border px-2.5 py-1 text-xs ' +
+      (ignored ? 'border-rose-200 bg-rose-50' : 'border-emerald-200 bg-emerald-50') +
+      '">' + txt + '</span>';
+  }
+
+  function renderEquivs(){
+    if (!equivKeys.length){
+      equivList.innerHTML = '<span class="text-slate-600">No equivalents added.</span>';
+      return;
+    }
+    equivList.innerHTML = equivKeys.map(function(k,i){
+      return '<span class="mr-2 mt-2 inline-flex items-center gap-1 rounded-full border border-slate-300 bg-slate-100 px-2.5 py-1 text-xs">' +
+               k.replace(/_/g," ") +
+               ' <button data-i="' + i + '" class="ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-white text-slate-600 ring-1 ring-slate-300 hover:bg-slate-50" aria-label="Remove">x</button>' +
+             '</span>';
+    }).join("");
+    Array.prototype.forEach.call(equivList.querySelectorAll('button[data-i]'), function(b){
+      b.onclick = function(){
+        equivKeys.splice(Number(b.getAttribute('data-i')),1);
+        renderEquivs();
+      };
+    });
+  }
+  if (equivBtn){
+    equivBtn.addEventListener("click", function(){
+      var val = equivSel.value;
+      if (val){ equivKeys.push(val); equivSel.value = ""; renderEquivs(); }
+    });
+    renderEquivs();
+  }
+
+  // Route toggle
+  var routeEl = document.getElementById("route");
+  var aBlock  = document.getElementById("alevel-section");
+  var dBlock  = document.getElementById("degree-section");
+  routeEl.addEventListener("change", function(){
+    var useDegree = routeEl.value === "degree";
+    if (useDegree){
+      aBlock.classList.add("hidden");
+      dBlock.classList.remove("hidden");
+    } else {
+      dBlock.classList.add("hidden");
+      aBlock.classList.remove("hidden");
+    }
+    document.getElementById("output").innerHTML = "";
+  });
+
+  // Calculate & render
+  function calculate(){
+    var route   = routeEl.value;
+    var gcse    = parseCSV(document.getElementById("gcse").value);
+    var alevels = parseCSV(document.getElementById("alevels").value);
+    var degree  = document.getElementById("degree").value;
+    var ucat    = document.getElementById("ucat").value;
+    var sjt     = document.getElementById("sjt").value;
+    var out     = document.getElementById("output");
+
+    var academic = 0, gDetail=null, aDetail=null;
+    if (route === "degree"){
+      academic = scoreDegree(degree);
+    } else {
+      gDetail = scoreGCSE(gcse, equivKeys);
+      aDetail = scoreALevel(alevels);
+      academic = gDetail.points + aDetail.points;
+    }
+
+    var ucatPts = ucatToPoints(ucat);
+    var total   = academic + ucatPts;
+    var sjtPts  = sjtBandPoints(sjt);
+
+    var html = '';
+    html +=   '<span class="text-lg font-extrabold">Academic Screen Score: ' + total + '</span>';
+    html +=   '<div class="flex flex-wrap items-center gap-3 mt-2">';
+    html +=   '<span class="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs">Academic Score: ' + academic + '</span>';
+    html +=   '<span class="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs">UCAT Score: ' + ucatPts + '</span>';
+    html += '</div>';
+
+    if (gDetail){
+      var all = gDetail.used.concat(gDetail.ignored);
+      html += '<p class="mt-2 text-xs text-slate-600"><b>GCSE</b>: Counted ' + gDetail.used.length + ' (best 8), ignored ' + gDetail.ignored.length + '.</p>';
+      html += '<div class="mt-1">';
+      for (var i=0;i<all.length;i++){
+        html += chip(String(all[i]) + ' pt', i>=8);
+      }
+      html += '</div>';
+    }
+    if (aDetail){
+      var allA = aDetail.used.concat(aDetail.ignored);
+      html += '<p class="mt-3 text-xs text-slate-600"><b>A level</b>: Counted ' + aDetail.used.length + ' (top 3), ignored ' + aDetail.ignored.length + '.</p>';
+      html += '<div class="mt-1">';
+      for (var j=0;j<allA.length;j++){
+        html += chip(String(allA[j]) + ' pt', j>=3);
+      }
+      html += '</div>';
+    }
+
+    // html += '<p class="mt-3 text-xs text-slate-700"><b>SJT</b>: ' + sjtPts.points + ' point(s) ' + (sjtPts.eligible ? 'eligible' : '<span class="text-rose-700 font-semibold">ineligible (Band 4)</span>') + '</p>';
+    html += '<p class="mt-3 text-xs text-slate-700"><b>SJT</b>: ' + (sjtPts.eligible ? '<span class="text-green-700 font-semibold">Eligible</span>' : '<span class="text-rose-700 font-semibold">Ineligible (Band 4)</span>') + '</p>';
+    
+    var warns = [];
+    if (gDetail && gDetail.ignored.length) warns.push('GCSE: more than 8 provided - only the strongest 8 were counted.');
+    if (aDetail && aDetail.ignored.length) warns.push('A level: more than 3 provided - only the top 3 were counted.');
+    if (!Number.isFinite(Number(ucat))) warns.push('UCAT: please enter a number.');
+    if (warns.length){
+      html += '<div class="mt-3 rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm font-semibold text-rose-800">' + warns.join(' ') + '</div>';
+    }
+
+    out.innerHTML = html;
+  }
+
+  document.getElementById("calc").addEventListener("click", calculate);
+</script>
+
+
+</body>
+</html>
