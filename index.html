@@ -13,14 +13,16 @@
       <div class="px-6 py-5 sm:px-8 sm:py-6">
         <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">MBBS Academic Screen Score Calculator (2026 Entry)</h1>
       </div>
+
       <div class="px-6 pb-6 sm:px-8 sm:pb-8">
-        <!-- Grid: Route + UCAT / A level -->
+        <!-- Grid: Route + UCAT -->
         <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
           <!-- Route -->
           <div>
             <label for="route" class="mb-1 block text-sm font-semibold text-slate-700">Entry route</label>
             <select id="route" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm shadow-sm focus:border-blue-300 focus:outline-none focus:ring-4 focus:ring-blue-200/50">
-              <option value="alevel">A levels + GCSE</option>
+              <option value="gcse_only">I haven’t got my A Level results yet</option>
+              <option value="alevel_only">I have my A Level results</option>
               <option value="degree">Degree route</option>
             </select>
           </div>
@@ -32,13 +34,12 @@
           </div>
         </div>
 
-        <!-- GCSE + A levels (shown for A level route) -->
-        <div id="alevel-section" class="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2">
-          <!-- GCSE -->
+        <!-- GCSE (shown for GCSE-only route) -->
+        <div id="gcse-section" class="mt-6">
           <div>
             <label for="gcse" class="mb-1 block text-sm font-semibold text-slate-700">GCSE grades</label>
             <textarea id="gcse" placeholder="9,9,8,8,7,7,6,6,6" class="w-full min-h-12 rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm shadow-sm placeholder:text-slate-400 focus:border-blue-300 focus:outline-none focus:ring-4 focus:ring-blue-200/50"></textarea>
-            <p class="mt-1 text-xs text-slate-600">Enter your <span class="font-semibold">best 8</span> separated using commas.</p>
+            <p class="mt-1 text-xs text-slate-600">Enter your <span class="font-semibold">best 8</span> separated using commas (e.g. 9,9,8,8,7,7,6,6). You can also add recognised equivalents below.</p>
 
             <!-- Equivalents -->
             <div class="mt-3 flex items-center gap-2">
@@ -67,13 +68,13 @@
             </div>
             <div id="equiv-list" class="mt-2 text-sm text-slate-600">No equivalents added.</div>
           </div>
+        </div>
 
-          <!-- A levels -->
-          <div id="alevel-row">
-            <label for="alevels" class="mb-1 block text-sm font-semibold text-slate-700">A Level grades</label>
-            <input id="alevels" placeholder="A*,A,A" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm shadow-sm placeholder:text-slate-400 focus:border-blue-300 focus:outline-none focus:ring-4 focus:ring-blue-200/50">
-            <p class="mt-1 text-xs text-slate-600">Enter your <span class="font-semibold">top 3</span> separated using commas.</p>
-          </div>
+        <!-- A levels (shown for A Level route) -->
+        <div id="alevel-section" class="mt-6 hidden">
+          <label for="alevels" class="mb-1 block text-sm font-semibold text-slate-700">A Level grades</label>
+          <input id="alevels" placeholder="A*,A,A" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm shadow-sm placeholder:text-slate-400 focus:border-blue-300 focus:outline-none focus:ring-4 focus:ring-blue-200/50">
+          <p class="mt-1 text-xs text-slate-600">Enter your <span class="font-semibold">top 3</span> separated using commas.</p>
         </div>
 
         <!-- Degree (shown for degree route) -->
@@ -201,19 +202,28 @@
 
   // Route toggle
   var routeEl = document.getElementById("route");
-  var aBlock  = document.getElementById("alevel-section");
-  var dBlock  = document.getElementById("degree-section");
-  routeEl.addEventListener("change", function(){
-    var useDegree = routeEl.value === "degree";
-    if (useDegree){
-      aBlock.classList.add("hidden");
-      dBlock.classList.remove("hidden");
-    } else {
-      dBlock.classList.add("hidden");
-      aBlock.classList.remove("hidden");
+  var gcseBlock = document.getElementById("gcse-section");
+  var alevelBlock = document.getElementById("alevel-section");
+  var degreeBlock = document.getElementById("degree-section");
+
+  function updateRouteUI(){
+    var route = routeEl.value;
+    // Reset visibility
+    gcseBlock.classList.add("hidden");
+    alevelBlock.classList.add("hidden");
+    degreeBlock.classList.add("hidden");
+
+    if (route === "gcse_only"){
+      gcseBlock.classList.remove("hidden");
+    } else if (route === "alevel_only"){
+      alevelBlock.classList.remove("hidden");
+    } else if (route === "degree"){
+      degreeBlock.classList.remove("hidden");
     }
     document.getElementById("output").innerHTML = "";
-  });
+  }
+  routeEl.addEventListener("change", updateRouteUI);
+  updateRouteUI(); // initialise
 
   // Calculate & render
   function calculate(){
@@ -228,10 +238,12 @@
     var academic = 0, gDetail=null, aDetail=null;
     if (route === "degree"){
       academic = scoreDegree(degree);
-    } else {
-      gDetail = scoreGCSE(gcse, equivKeys);
+    } else if (route === "alevel_only"){
       aDetail = scoreALevel(alevels);
-      academic = gDetail.points + aDetail.points;
+      academic = aDetail.points;
+    } else { // gcse_only
+      gDetail = scoreGCSE(gcse, equivKeys);
+      academic = gDetail.points;
     }
 
     var ucatPts = ucatToPoints(ucat);
@@ -264,13 +276,16 @@
       html += '</div>';
     }
 
-    // html += '<p class="mt-3 text-xs text-slate-700"><b>SJT</b>: ' + sjtPts.points + ' point(s) ' + (sjtPts.eligible ? 'eligible' : '<span class="text-rose-700 font-semibold">ineligible (Band 4)</span>') + '</p>';
     html += '<p class="mt-3 text-xs text-slate-700"><b>SJT</b>: ' + (sjtPts.eligible ? '<span class="text-green-700 font-semibold">Eligible</span>' : '<span class="text-rose-700 font-semibold">Ineligible (Band 4)</span>') + '</p>';
     
     var warns = [];
     if (gDetail && gDetail.ignored.length) warns.push('GCSE: more than 8 provided - only the strongest 8 were counted.');
     if (aDetail && aDetail.ignored.length) warns.push('A level: more than 3 provided - only the top 3 were counted.');
     if (!Number.isFinite(Number(ucat))) warns.push('UCAT: please enter a number.');
+    if (route === "degree" && !degree) warns.push('Degree route: please select your classification.');
+    if (route === "alevel_only" && !alevels.length) warns.push('A level route: please enter your grades (e.g. A*,A,A).');
+    if (route === "gcse_only" && !gcse.length) warns.push('GCSE route: please enter your grades (e.g. 9,9,8,8,7,7,6,6).');
+
     if (warns.length){
       html += '<div class="mt-3 rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm font-semibold text-rose-800">' + warns.join(' ') + '</div>';
     }
@@ -279,8 +294,6 @@
   }
 
   document.getElementById("calc").addEventListener("click", calculate);
-</script>
-
-
+  </script>
 </body>
 </html>
