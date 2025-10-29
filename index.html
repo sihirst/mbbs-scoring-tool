@@ -233,7 +233,7 @@
     var alevels = parseCSV(document.getElementById("alevels").value);
     var degree  = document.getElementById("degree").value;
     var ucat    = document.getElementById("ucat").value;
-    var sjt     = document.getElementById("sjt").value;
+    //var sjt     = document.getElementById("sjt").value;
     var out     = document.getElementById("output");
 
     var academic = 0, gDetail=null, aDetail=null;
@@ -249,7 +249,7 @@
 
     var ucatPts = ucatToPoints(ucat);
     var total   = academic + ucatPts;
-    var sjtPts  = sjtBandPoints(sjt);
+    //var sjtPts  = sjtBandPoints(sjt);
 
     var html = '';
     html +=   '<span class="text-lg font-extrabold">Academic Screen Score: <span class="text-lg font-bold">' + total + '</span> <span class="text-sm font-bold"> / 100</span></span>';
