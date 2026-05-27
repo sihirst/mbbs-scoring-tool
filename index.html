@@ -27,7 +27,6 @@
 
       font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
       color: var(--bp-text);
-      background: var(--bp-bg);
       padding: 24px;
       line-height: 1.45;
     }
@@ -298,7 +297,7 @@
       <section class="bp-card" aria-labelledby="mbbs-score-title">
         <div class="bp-header">
           <h1 id="mbbs-score-title">MBBS Academic Screen Score Calculator</h1>
-          <p class="bp-intro">For 2026 entry. Enter your route and UCAT score to calculate the academic screen score.</p>
+          <p class="bp-intro">Enter your route and UCAT score to calculate the academic screen score.</p>
         </div>
 
         <div class="bp-body">
@@ -367,14 +366,14 @@
             </select>
           </div>
 
-          <div id="ucat-only-message" class="bp-output bp-hidden" style="margin-top:0;">
+          <div id="ucat-only-message" class="bp-output bp-hidden" style="margin-top:0; margin-bottom:15px">
             <strong>This route is scored on UCAT only.</strong>
             <div class="bp-note">GCSE grades and equivalents are not required. The Academic Screen score will show out of 60.</div>
           </div>
 
           <button id="calc" type="button" class="bp-button">Calculate</button>
 
-          <div id="output" class="bp-output" aria-live="polite"></div>
+          <div id="output" class="bp-output" aria-live="polite" style="display:none"></div>
         </div>
       </section>
     </div>
@@ -535,6 +534,8 @@
       const ucatPts = ucatToPoints(ucat);
       const ucatOnly = routeIsUCATOnly(route);
 
+      document.getElementById('output').removeAttribute('style');
+      
       if (!ucatOnly){
         if (route === "degree"){
           academic = scoreDegree(degree);
