@@ -4,46 +4,329 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>MBBS Academic Screen + UCAT (2026)</title>
-  <!-- Tailwind (Play CDN) -->
-  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    #mbbs-score-calculator,
+    #mbbs-score-calculator * {
+      box-sizing: border-box;
+    }
+
+    #mbbs-score-calculator {
+      --bp-navy: #003a63;
+      --bp-blue: #005eb8;
+      --bp-light-blue: #e8f2fb;
+      --bp-border: #d7e0e7;
+      --bp-text: #1f2933;
+      --bp-muted: #5f6f7b;
+      --bp-bg: #f4f7fa;
+      --bp-white: #ffffff;
+      --bp-error: #b42318;
+      --bp-error-bg: #fff1f0;
+      --bp-success-bg: #eef8f1;
+      --bp-success-border: #b7dfc2;
+
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: var(--bp-text);
+      background: var(--bp-bg);
+      padding: 24px;
+      line-height: 1.45;
+    }
+
+    #mbbs-score-calculator .bp-wrap {
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    #mbbs-score-calculator .bp-card {
+      background: var(--bp-white);
+      border: 1px solid var(--bp-border);
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0, 58, 99, 0.08);
+    }
+
+    #mbbs-score-calculator .bp-header {
+      background: var(--bp-navy);
+      color: #ffffff;
+      padding: 22px 26px;
+      border-bottom: 5px solid var(--bp-blue);
+    }
+
+    #mbbs-score-calculator h1 {
+      margin: 0;
+      font-size: clamp(24px, 3vw, 36px);
+      line-height: 1.15;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    #mbbs-score-calculator .bp-intro {
+      margin: 8px 0 0;
+      color: rgba(255,255,255,0.9);
+      font-size: 15px;
+    }
+
+    #mbbs-score-calculator .bp-body {
+      padding: 26px;
+    }
+
+    #mbbs-score-calculator .bp-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    #mbbs-score-calculator .bp-field {
+      margin: 0 0 18px;
+    }
+
+    #mbbs-score-calculator label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--bp-text);
+    }
+
+    #mbbs-score-calculator input,
+    #mbbs-score-calculator select,
+    #mbbs-score-calculator textarea {
+      width: 100%;
+      border: 2px solid var(--bp-border);
+      border-radius: 3px;
+      background: #ffffff;
+      color: var(--bp-text);
+      font-family: inherit;
+      font-size: 16px;
+      padding: 12px 13px;
+      min-height: 48px;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    #mbbs-score-calculator textarea {
+      min-height: 76px;
+      resize: vertical;
+    }
+
+    #mbbs-score-calculator input:focus,
+    #mbbs-score-calculator select:focus,
+    #mbbs-score-calculator textarea:focus {
+      border-color: var(--bp-blue);
+      box-shadow: 0 0 0 3px rgba(0, 94, 184, 0.18);
+    }
+
+    #mbbs-score-calculator .bp-help {
+      margin: 7px 0 0;
+      color: var(--bp-muted);
+      font-size: 13px;
+    }
+
+    #mbbs-score-calculator .bp-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    #mbbs-score-calculator .bp-row select {
+      max-width: 340px;
+      flex: 1 1 240px;
+    }
+
+    #mbbs-score-calculator .bp-button {
+      appearance: none;
+      border: 2px solid var(--bp-blue);
+      border-radius: 3px;
+      background: var(--bp-blue);
+      color: #ffffff;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 700;
+      min-height: 48px;
+      padding: 12px 20px;
+      text-decoration: none;
+      transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    #mbbs-score-calculator .bp-button:hover {
+      background: var(--bp-navy);
+      border-color: var(--bp-navy);
+    }
+
+    #mbbs-score-calculator .bp-button:focus {
+      box-shadow: 0 0 0 3px rgba(0, 94, 184, 0.22);
+      outline: none;
+    }
+
+    #mbbs-score-calculator .bp-button-secondary {
+      background: #ffffff;
+      color: var(--bp-blue);
+    }
+
+    #mbbs-score-calculator .bp-button-secondary:hover {
+      background: var(--bp-light-blue);
+      border-color: var(--bp-blue);
+      color: var(--bp-navy);
+    }
+
+    #mbbs-score-calculator .bp-hidden {
+      display: none !important;
+    }
+
+    #mbbs-score-calculator .bp-output {
+      margin-top: 22px;
+      border: 1px solid var(--bp-border);
+      border-left: 5px solid var(--bp-blue);
+      background: #ffffff;
+      padding: 18px;
+      min-height: 54px;
+    }
+
+    #mbbs-score-calculator .bp-scoreline {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--bp-navy);
+    }
+
+    #mbbs-score-calculator .bp-scoreline span {
+      font-size: 30px;
+    }
+
+    #mbbs-score-calculator .bp-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    #mbbs-score-calculator .bp-pill {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--bp-border);
+      border-radius: 999px;
+      background: var(--bp-bg);
+      color: var(--bp-text);
+      font-size: 13px;
+      padding: 7px 10px;
+    }
+
+    #mbbs-score-calculator .bp-chip {
+      display: inline-flex;
+      align-items: center;
+      margin: 8px 8px 0 0;
+      border: 1px solid var(--bp-success-border);
+      border-radius: 999px;
+      background: var(--bp-success-bg);
+      color: var(--bp-text);
+      font-size: 12px;
+      padding: 6px 9px;
+    }
+
+    #mbbs-score-calculator .bp-chip-ignored {
+      border-color: #ffd0cc;
+      background: #fff1f0;
+    }
+
+    #mbbs-score-calculator .bp-equiv-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin: 8px 8px 0 0;
+      border: 1px solid var(--bp-border);
+      border-radius: 999px;
+      background: var(--bp-bg);
+      color: var(--bp-text);
+      font-size: 12px;
+      padding: 6px 9px;
+    }
+
+    #mbbs-score-calculator .bp-remove {
+      border: 0;
+      border-radius: 50%;
+      background: #ffffff;
+      color: var(--bp-muted);
+      cursor: pointer;
+      width: 20px;
+      height: 20px;
+      font-size: 13px;
+      line-height: 1;
+    }
+
+    #mbbs-score-calculator .bp-warning {
+      margin-top: 14px;
+      border: 1px solid #ffcdc7;
+      border-left: 5px solid var(--bp-error);
+      background: var(--bp-error-bg);
+      color: var(--bp-error);
+      padding: 12px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    #mbbs-score-calculator .bp-note {
+      margin-top: 12px;
+      color: var(--bp-muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 720px) {
+      #mbbs-score-calculator {
+        padding: 12px;
+      }
+
+      #mbbs-score-calculator .bp-header,
+      #mbbs-score-calculator .bp-body {
+        padding: 18px;
+      }
+
+      #mbbs-score-calculator .bp-grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+    }
+  </style>
 </head>
-<body class="bg-slate-50 text-slate-900">
-  <main class="mx-auto max-w-5xl p-6 sm:p-10">
-    <section class="rounded-2xl border border-slate-200 bg-white shadow-sm">
-      <div class="px-6 py-5 sm:px-8 sm:py-6">
-        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">MBBS Academic Screen Score Calculator (2026 Entry)</h1>
-      </div>
 
-      <div class="px-6 pb-6 sm:px-8 sm:pb-8">
-        <!-- Grid: Route + UCAT -->
-        <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
-          <!-- Route -->
-          <div>
-            <label for="route" class="mb-1 block text-sm font-semibold text-slate-700">Entry route</label>
-            <select id="route" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm shadow-sm focus:border-blue-300 focus:outline-none focus:ring-4 focus:ring-blue-200/50">
-              <option value="gcse_only">I haven’t got my A Level results yet</option>
-              <option value="alevel_only">I have my A Level results</option>
-              <option value="degree">Degree route</option>
-            </select>
-          </div>
-
-          <!-- UCAT -->
-          <div>
-            <label for="ucat" class="mb-1 block text-sm font-semibold text-slate-700">UCAT score</label>
-            <input id="ucat" type="number" inputmode="numeric" placeholder="e.g. 2390" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm shadow-sm placeholder:text-slate-400 focus:border-blue-300 focus:outline-none focus:ring-4 focus:ring-blue-200/50">
-          </div>
+<body>
+  <div id="mbbs-score-calculator">
+    <div class="bp-wrap">
+      <section class="bp-card" aria-labelledby="mbbs-score-title">
+        <div class="bp-header">
+          <h1 id="mbbs-score-title">MBBS Academic Screen Score Calculator</h1>
+          <p class="bp-intro">For 2026 entry. Enter your route and UCAT score to calculate the academic screen score.</p>
         </div>
 
-        <!-- GCSE (shown for GCSE-only route) -->
-        <div id="gcse-section" class="mt-6">
-          <div>
-            <label for="gcse" class="mb-1 block text-sm font-semibold text-slate-700">GCSE grades</label>
-            <textarea id="gcse" placeholder="9,9,8,8,7,7,6,6,6" class="w-full min-h-12 rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm shadow-sm placeholder:text-slate-400 focus:border-blue-300 focus:outline-none focus:ring-4 focus:ring-blue-200/50"></textarea>
-            <p class="mt-1 text-xs text-slate-600">Enter your <span class="font-semibold">best 8</span> separated using commas (e.g. 9,9,8,8,7,7,6,6). You can also add recognised equivalents below.</p>
+        <div class="bp-body">
+          <div class="bp-grid">
+            <div class="bp-field">
+              <label for="route">Entry route</label>
+              <select id="route">
+                <option value="gcse_only">I haven’t got my A Level results yet</option>
+                <option value="alevel_only">I have my A Level results</option>
+                <option value="degree">Degree route</option>
+                <option value="international">International student</option>
+                <option value="a101">A101 applicant</option>
+              </select>
+            </div>
 
-            <!-- Equivalents -->
-            <div class="mt-3 flex items-center gap-2">
-              <select id="gcse-equiv" class="w-full max-w-xs rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm shadow-sm focus:border-blue-300 focus:outline-none focus:ring-4 focus:ring-blue-200/50">
+            <div class="bp-field">
+              <label for="ucat">UCAT score</label>
+              <input id="ucat" type="number" inputmode="numeric" placeholder="e.g. 2390">
+            </div>
+          </div>
+
+          <div id="gcse-section" class="bp-field">
+            <label for="gcse">GCSE grades</label>
+            <textarea id="gcse" placeholder="9,9,8,8,7,7,6,6"></textarea>
+            <p class="bp-help">Enter your <strong>best 8</strong> separated using commas. You can also add recognised equivalents below.</p>
+
+            <div class="bp-row" style="margin-top:12px;">
+              <select id="gcse-equiv">
                 <option value="">Add equivalent…</option>
                 <optgroup label="National 5">
                   <option value="NAT5_A">A (5)</option>
@@ -63,238 +346,263 @@
                   <option value="IRL_O_MERIT">C/Merit (0)</option>
                 </optgroup>
               </select>
-              <button id="add-equiv" type="button" class="inline-flex items-center rounded-xl border border-slate-300 bg-slate-50 px-4 py-2 text-sm font-semibold shadow-sm hover:bg-slate-100 focus:outline-none focus:ring-4 focus:ring-blue-200/50">Add</button>
+              <button id="add-equiv" type="button" class="bp-button bp-button-secondary">Add</button>
             </div>
-            <div id="equiv-list" class="mt-2 text-sm text-slate-600">No equivalents added.</div>
+            <div id="equiv-list" class="bp-help">No equivalents added.</div>
           </div>
-        </div>
 
-        <!-- A levels (shown for A Level route) -->
-        <div id="alevel-section" class="mt-6 hidden">
-          <label for="alevels" class="mb-1 block text-sm font-semibold text-slate-700">A Level grades</label>
-          <input id="alevels" placeholder="A*,A,A" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm shadow-sm placeholder:text-slate-400 focus:border-blue-300 focus:outline-none focus:ring-4 focus:ring-blue-200/50">
-          <p class="mt-1 text-xs text-slate-600">Enter your <span class="font-semibold">top 3</span> separated using commas.</p>
-        </div>
+          <div id="alevel-section" class="bp-field bp-hidden">
+            <label for="alevels">A Level grades</label>
+            <input id="alevels" placeholder="A*,A,A">
+            <p class="bp-help">Enter your <strong>top 3</strong> separated using commas.</p>
+          </div>
 
-        <!-- Degree (shown for degree route) -->
-        <div id="degree-section" class="mt-6 hidden">
-          <label for="degree" class="mb-1 block text-sm font-semibold text-slate-700">Degree classification</label>
-          <select id="degree" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm shadow-sm focus:border-blue-300 focus:outline-none focus:ring-4 focus:ring-blue-200/50">
-            <option value="">Select…</option>
-            <option value="1st">First (1st)</option>
-            <option value="2:1">Upper Second (2:1)</option>
-            <option value="other">Other / below 2:1</option>
-          </select>
-        </div>
-
-        <!-- SJT + Calculate -->
-        <div class="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2">
-          <!-- <div>
-            <label for="sjt" class="mb-1 block text-sm font-semibold text-slate-700">SJT band (<i>optional</i>)</label>
-            <select id="sjt" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm shadow-sm focus:border-blue-300 focus:outline-none focus:ring-4 focus:ring-blue-200/50">
-              <option value="">Not provided</option>
-              <option value="1">Band 1</option>
-              <option value="2">Band 2</option>
-              <option value="3">Band 3</option>
-              <option value="4">Band 4 (ineligible)</option>
+          <div id="degree-section" class="bp-field bp-hidden">
+            <label for="degree">Degree classification</label>
+            <select id="degree">
+              <option value="">Select…</option>
+              <option value="1st">First (1st)</option>
+              <option value="2:1">Upper Second (2:1)</option>
+              <option value="other">Other / below 2:1</option>
             </select>
-          </div> -->
-          <div class=""> <!-- class=flex items-end justify-end -->
-            <button id="calc" type="button" class="inline-flex items-center rounded-xl bg-slate-900 px-5 py-3 text-sm font-bold text-white shadow-sm hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-blue-200/50">Calculate</button>
           </div>
-        </div>
 
-        <!-- Output -->
-        <div id="output" class="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm"></div>
-      </div>
-    </section>
-  </main>
+          <div id="ucat-only-message" class="bp-output bp-hidden" style="margin-top:0;">
+            <strong>This route is scored on UCAT only.</strong>
+            <div class="bp-note">GCSE grades and equivalents are not required. The Academic Screen score will show out of 60.</div>
+          </div>
+
+          <button id="calc" type="button" class="bp-button">Calculate</button>
+
+          <div id="output" class="bp-output" aria-live="polite"></div>
+        </div>
+      </section>
+    </div>
+  </div>
 
   <script>
-  // ---------- Policy mappings ----------
-  const GCSE_MAP = new Map([["9",5],["8",4],["7",3],["6",1],["5",0],["4",0],["3",0],["2",0],["1",0],["U",0]]);
-  const ALVL_MAP = new Map([["A*",16],["A",12],["B",8],["C",0],["D",0],["E",0],["U",0]]);
-  const GCSE_EQUIV = new Map([
-    ["NAT5_A",5],["NAT5_B",1],["NAT5_C",0],
-    ["OLD_A*",5],["OLD_A",3],["OLD_B",1],["OLD_C",0],
-    ["IRL_O_A*",5],["IRL_O_A",3],["IRL_O_B",1],["IRL_O_MERIT",0]
-  ]);
-  const norm = x => String(x||"").toUpperCase().trim();
+  (function(){
+    // ---------- Policy mappings ----------
+    const GCSE_MAP = new Map([["9",5],["8",4],["7",3],["6",1],["5",0],["4",0],["3",0],["2",0],["1",0],["U",0]]);
+    const ALVL_MAP = new Map([["A*",16],["A",12],["B",8],["C",0],["D",0],["E",0],["U",0]]);
+    const GCSE_EQUIV = new Map([
+      ["NAT5_A",5],["NAT5_B",1],["NAT5_C",0],
+      ["OLD_A*",5],["OLD_A",3],["OLD_B",1],["OLD_C",0],
+      ["IRL_O_A*",5],["IRL_O_A",3],["IRL_O_B",1],["IRL_O_MERIT",0]
+    ]);
 
-  // ---------- Scoring ----------
-  function scoreGCSE(achieved, equivKeys){
-    const achievedPts = achieved.map(g => GCSE_MAP.get(norm(g)) ?? 0);
-    const equivPts    = equivKeys.map(k => GCSE_EQUIV.get(norm(k)) ?? 0);
-    const all         = achievedPts.concat(equivPts).filter(Number.isFinite).sort((a,b)=>b-a);
-    const used        = all.slice(0,8);
-    const ignored     = all.slice(8);
-    const points      = Math.min(40, used.reduce((a,b)=>a+b,0));
-    return {points, used, ignored};
-  }
-  function scoreALevel(grades){
-    const pts = grades.map(g => ALVL_MAP.get(norm(g)) ?? 0)
-      .filter(Number.isFinite).sort((a,b)=>b-a);
-    const used = pts.slice(0,3), ignored = pts.slice(3);
-    const points = Math.min(40, used.reduce((a,b)=>a+b,0));
-    return {points, used, ignored};
-  }
-  function scoreDegree(c){
-    const v = norm(c).replace(/\s/g,"");
-    if (["FIRST","1ST","ONE"].includes(v)) return 40;
-    if (["2:1","21","UPPERSECOND","UPPERSECONDCLASS","UPPER"].includes(v)) return 35;
-    return 0;
-  }
-  function ucatToPoints(total){
-    const t = Number(total);
-    if (!Number.isFinite(t)) return 0;
-    if (t >= 2400) return 60;
-    var pts = Math.floor((t - 1810) / 10) + 1;
-    return Math.max(1, pts);
-  }
-  function sjtBandPoints(band){
-    const b = norm(band).replace("BAND","");
-    if (b==="") return {points:0, eligible:false};
-    if (b==="1") return {points:5, eligible:true};
-    if (b==="2") return {points:3, eligible:true};
-    if (b==="3") return {points:1, eligible:true};
-    if (b==="4") return {points:0, eligible:false};
-    return {points:0, eligible:true};
-  }
+    const root = document.getElementById("mbbs-score-calculator");
+    const $ = id => root.querySelector("#" + id);
+    const norm = x => String(x || "").toUpperCase().trim();
 
-  // ---------- UI helpers ----------
-  var equivKeys = [];
-  var equivSel  = document.getElementById("gcse-equiv");
-  var equivBtn  = document.getElementById("add-equiv");
-  var equivList = document.getElementById("equiv-list");
-
-  function parseCSV(v){ return (v||"").split(/[,;\s]+/).filter(Boolean); }
-  function chip(txt, ignored){
-    return '<span class="mr-2 mt-2 inline-block rounded-full border px-2.5 py-1 text-xs ' +
-      (ignored ? 'border-rose-200 bg-rose-50' : 'border-emerald-200 bg-emerald-50') +
-      '">' + txt + '</span>';
-  }
-
-  function renderEquivs(){
-    if (!equivKeys.length){
-      equivList.innerHTML = '<span class="text-slate-600">No equivalents added.</span>';
-      return;
-    }
-    equivList.innerHTML = equivKeys.map(function(k,i){
-      return '<span class="mr-2 mt-2 inline-flex items-center gap-1 rounded-full border border-slate-300 bg-slate-100 px-2.5 py-1 text-xs">' +
-               k.replace(/_/g," ") +
-               ' <button data-i="' + i + '" class="ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-white text-slate-600 ring-1 ring-slate-300 hover:bg-slate-50" aria-label="Remove">x</button>' +
-             '</span>';
-    }).join("");
-    Array.prototype.forEach.call(equivList.querySelectorAll('button[data-i]'), function(b){
-      b.onclick = function(){
-        equivKeys.splice(Number(b.getAttribute('data-i')),1);
-        renderEquivs();
-      };
-    });
-  }
-  if (equivBtn){
-    equivBtn.addEventListener("click", function(){
-      var val = equivSel.value;
-      if (val){ equivKeys.push(val); equivSel.value = ""; renderEquivs(); }
-    });
-    renderEquivs();
-  }
-
-  // Route toggle
-  var routeEl = document.getElementById("route");
-  var gcseBlock = document.getElementById("gcse-section");
-  var alevelBlock = document.getElementById("alevel-section");
-  var degreeBlock = document.getElementById("degree-section");
-
-  function updateRouteUI(){
-    var route = routeEl.value;
-    // Reset visibility
-    gcseBlock.classList.add("hidden");
-    alevelBlock.classList.add("hidden");
-    degreeBlock.classList.add("hidden");
-
-    if (route === "gcse_only"){
-      gcseBlock.classList.remove("hidden");
-    } else if (route === "alevel_only"){
-      alevelBlock.classList.remove("hidden");
-    } else if (route === "degree"){
-      degreeBlock.classList.remove("hidden");
-    }
-    document.getElementById("output").innerHTML = "";
-  }
-  routeEl.addEventListener("change", updateRouteUI);
-  updateRouteUI(); // initialise
-
-  // Calculate & render
-  function calculate(){
-    var route   = routeEl.value;
-    var gcse    = parseCSV(document.getElementById("gcse").value);
-    var alevels = parseCSV(document.getElementById("alevels").value);
-    var degree  = document.getElementById("degree").value;
-    var ucat    = document.getElementById("ucat").value;
-    //var sjt     = document.getElementById("sjt").value;
-    var out     = document.getElementById("output");
-
-    var academic = 0, gDetail=null, aDetail=null;
-    if (route === "degree"){
-      academic = scoreDegree(degree);
-    } else if (route === "alevel_only"){
-      aDetail = scoreALevel(alevels);
-      academic = aDetail.points;
-    } else { // gcse_only
-      gDetail = scoreGCSE(gcse, equivKeys);
-      academic = gDetail.points;
+    // ---------- Scoring ----------
+    function scoreGCSE(achieved, equivKeys){
+      const achievedPts = achieved.map(g => GCSE_MAP.get(norm(g)) ?? 0);
+      const equivPts = equivKeys.map(k => GCSE_EQUIV.get(norm(k)) ?? 0);
+      const all = achievedPts.concat(equivPts).filter(Number.isFinite).sort((a,b)=>b-a);
+      const used = all.slice(0,8);
+      const ignored = all.slice(8);
+      const points = Math.min(40, used.reduce((a,b)=>a+b,0));
+      return {points, used, ignored};
     }
 
-    var ucatPts = ucatToPoints(ucat);
-    var total   = academic + ucatPts;
-    //var sjtPts  = sjtBandPoints(sjt);
+    function scoreALevel(grades){
+      const pts = grades.map(g => ALVL_MAP.get(norm(g)) ?? 0)
+        .filter(Number.isFinite).sort((a,b)=>b-a);
+      const used = pts.slice(0,3);
+      const ignored = pts.slice(3);
+      const points = Math.min(40, used.reduce((a,b)=>a+b,0));
+      return {points, used, ignored};
+    }
 
-    var html = '';
-    html +=   '<span class="text-lg font-extrabold">Academic Screen Score: <span class="text-lg font-bold">' + total + '</span> <span class="text-sm font-bold"> / 100</span></span>';
-    html +=   '<div class="flex flex-wrap items-center gap-3 mt-2">';
-    html +=   '<span class="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs">Academic Score: ' + academic + '</span>';
-    html +=   '<span class="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs">UCAT Score: ' + ucatPts + '</span>';
-    html += '</div>';
+    function scoreDegree(c){
+      const v = norm(c).replace(/\s/g,"");
+      if (["FIRST","1ST","ONE"].includes(v)) return 40;
+      if (["2:1","21","UPPERSECOND","UPPERSECONDCLASS","UPPER"].includes(v)) return 35;
+      return 0;
+    }
 
-    if (gDetail){
-      var all = gDetail.used.concat(gDetail.ignored);
-      html += '<p class="mt-2 text-xs text-slate-600"><b>GCSE</b>: Counted ' + gDetail.used.length + ' (best 8), ignored ' + gDetail.ignored.length + '.</p>';
-      html += '<div class="mt-1">';
-      for (var i=0;i<all.length;i++){
-        html += chip(String(all[i]) + ' pt', i>=8);
+    function ucatToPoints(total){
+      const t = Number(total);
+      if (!Number.isFinite(t)) return 0;
+      if (t >= 2400) return 60;
+      const pts = Math.floor((t - 1810) / 10) + 1;
+      return Math.max(1, pts);
+    }
+
+    // ---------- UI helpers ----------
+    let equivKeys = [];
+    const equivSel = $("gcse-equiv");
+    const equivBtn = $("add-equiv");
+    const equivList = $("equiv-list");
+
+    function parseCSV(v){
+      return (v || "").split(/[,;\s]+/).filter(Boolean);
+    }
+
+    function chip(txt, ignored){
+      return '<span class="bp-chip ' + (ignored ? 'bp-chip-ignored' : '') + '">' + txt + '</span>';
+    }
+
+    function routeIsUCATOnly(route){
+      return route === "international" || route === "a101";
+    }
+
+    function routeLabel(route){
+      if (route === "international") return "International student";
+      if (route === "a101") return "A101 applicant";
+      if (route === "degree") return "Degree route";
+      if (route === "alevel_only") return "A Level route";
+      return "GCSE route";
+    }
+
+    function renderEquivs(){
+      if (!equivKeys.length){
+        equivList.innerHTML = "No equivalents added.";
+        return;
       }
-      html += '</div>';
+
+      equivList.innerHTML = equivKeys.map(function(k,i){
+        return '<span class="bp-equiv-item">' +
+          k.replace(/_/g," ") +
+          '<button type="button" data-i="' + i + '" class="bp-remove" aria-label="Remove equivalent">×</button>' +
+        '</span>';
+      }).join("");
+
+      Array.prototype.forEach.call(equivList.querySelectorAll("button[data-i]"), function(b){
+        b.onclick = function(){
+          equivKeys.splice(Number(b.getAttribute("data-i")),1);
+          renderEquivs();
+        };
+      });
     }
-    if (aDetail){
-      var allA = aDetail.used.concat(aDetail.ignored);
-      html += '<p class="mt-3 text-xs text-slate-600"><b>A level</b>: Counted ' + aDetail.used.length + ' (top 3), ignored ' + aDetail.ignored.length + '.</p>';
-      html += '<div class="mt-1">';
-      for (var j=0;j<allA.length;j++){
-        html += chip(String(allA[j]) + ' pt', j>=3);
+
+    if (equivBtn){
+      equivBtn.addEventListener("click", function(){
+        const val = equivSel.value;
+        if (val){
+          equivKeys.push(val);
+          equivSel.value = "";
+          renderEquivs();
+        }
+      });
+      renderEquivs();
+    }
+
+    // Route toggle
+    const routeEl = $("route");
+    const gcseBlock = $("gcse-section");
+    const alevelBlock = $("alevel-section");
+    const degreeBlock = $("degree-section");
+    const ucatOnlyMessage = $("ucat-only-message");
+    const output = $("output");
+
+    function updateRouteUI(){
+      const route = routeEl.value;
+
+      gcseBlock.classList.add("bp-hidden");
+      alevelBlock.classList.add("bp-hidden");
+      degreeBlock.classList.add("bp-hidden");
+      ucatOnlyMessage.classList.add("bp-hidden");
+
+      if (routeIsUCATOnly(route)){
+        ucatOnlyMessage.classList.remove("bp-hidden");
+      } else if (route === "gcse_only"){
+        gcseBlock.classList.remove("bp-hidden");
+      } else if (route === "alevel_only"){
+        alevelBlock.classList.remove("bp-hidden");
+      } else if (route === "degree"){
+        degreeBlock.classList.remove("bp-hidden");
       }
+
+      output.innerHTML = "";
+    }
+
+    routeEl.addEventListener("change", updateRouteUI);
+    updateRouteUI();
+
+    // Calculate & render
+    function calculate(){
+      const route = routeEl.value;
+      const gcse = parseCSV($("gcse").value);
+      const alevels = parseCSV($("alevels").value);
+      const degree = $("degree").value;
+      const ucat = $("ucat").value;
+
+      let academic = 0;
+      let gDetail = null;
+      let aDetail = null;
+      const ucatPts = ucatToPoints(ucat);
+      const ucatOnly = routeIsUCATOnly(route);
+
+      if (!ucatOnly){
+        if (route === "degree"){
+          academic = scoreDegree(degree);
+        } else if (route === "alevel_only"){
+          aDetail = scoreALevel(alevels);
+          academic = aDetail.points;
+        } else {
+          gDetail = scoreGCSE(gcse, equivKeys);
+          academic = gDetail.points;
+        }
+      }
+
+      const total = ucatOnly ? ucatPts : academic + ucatPts;
+      const scoreMax = ucatOnly ? 60 : 100;
+
+      let html = "";
+      html += '<div class="bp-scoreline">Academic Screen Score: <span>' + total + '</span> / ' + scoreMax + '</div>';
+      html += '<div class="bp-pills">';
+      html += '<span class="bp-pill">Entry route: ' + routeLabel(route) + '</span>';
+
+      if (!ucatOnly){
+        html += '<span class="bp-pill">Academic Score: ' + academic + ' / 40</span>';
+      }
+
+      html += '<span class="bp-pill">UCAT Score: ' + ucatPts + ' / 60</span>';
       html += '</div>';
+
+      if (ucatOnly){
+        html += '<p class="bp-note"><strong>UCAT-only route:</strong> GCSE grades and equivalents are not used for this route.</p>';
+      }
+
+      if (gDetail){
+        const all = gDetail.used.concat(gDetail.ignored);
+        html += '<p class="bp-note"><strong>GCSE:</strong> counted ' + gDetail.used.length + ' best grades; ignored ' + gDetail.ignored.length + '.</p>';
+        html += '<div>';
+        for (let i=0; i<all.length; i++){
+          html += chip(String(all[i]) + ' pt', i >= 8);
+        }
+        html += '</div>';
+      }
+
+      if (aDetail){
+        const allA = aDetail.used.concat(aDetail.ignored);
+        html += '<p class="bp-note"><strong>A Level:</strong> counted ' + aDetail.used.length + ' top grades; ignored ' + aDetail.ignored.length + '.</p>';
+        html += '<div>';
+        for (let j=0; j<allA.length; j++){
+          html += chip(String(allA[j]) + ' pt', j >= 3);
+        }
+        html += '</div>';
+      }
+
+      const warns = [];
+      if (!Number.isFinite(Number(ucat))) warns.push("UCAT: please enter a number.");
+      if (!ucatOnly && gDetail && gDetail.ignored.length) warns.push("GCSE: more than 8 provided - only the strongest 8 were counted.");
+      if (!ucatOnly && aDetail && aDetail.ignored.length) warns.push("A Level: more than 3 provided - only the top 3 were counted.");
+      if (route === "degree" && !degree) warns.push("Degree route: please select your classification.");
+      if (route === "alevel_only" && !alevels.length) warns.push("A Level route: please enter your grades, e.g. A*,A,A.");
+      if (route === "gcse_only" && !gcse.length) warns.push("GCSE route: please enter your grades, e.g. 9,9,8,8,7,7,6,6.");
+
+      if (warns.length){
+        html += '<div class="bp-warning">' + warns.join(" ") + '</div>';
+      }
+
+      output.innerHTML = html;
     }
 
-    // Hide for now, not needed for Academic Scoring
-    // html += '<p class="mt-3 text-xs text-slate-700"><b>SJT</b>: ' + (sjtPts.eligible ? '<span class="text-green-700 font-semibold">Eligible</span>' : '<span class="text-rose-700 font-semibold">Ineligible (Band 4)</span>') + '</p>';
-    
-    var warns = [];
-    if (gDetail && gDetail.ignored.length) warns.push('GCSE: more than 8 provided - only the strongest 8 were counted.');
-    if (aDetail && aDetail.ignored.length) warns.push('A level: more than 3 provided - only the top 3 were counted.');
-    if (!Number.isFinite(Number(ucat))) warns.push('UCAT: please enter a number.');
-    if (route === "degree" && !degree) warns.push('Degree route: please select your classification.');
-    if (route === "alevel_only" && !alevels.length) warns.push('A level route: please enter your grades (e.g. A*,A,A).');
-    if (route === "gcse_only" && !gcse.length) warns.push('GCSE route: please enter your grades (e.g. 9,9,8,8,7,7,6,6).');
-
-    if (warns.length){
-      html += '<div class="mt-3 rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm font-semibold text-rose-800">' + warns.join(' ') + '</div>';
-    }
-
-    out.innerHTML = html;
-  }
-
-  document.getElementById("calc").addEventListener("click", calculate);
+    $("calc").addEventListener("click", calculate);
+  })();
   </script>
 </body>
 </html>
