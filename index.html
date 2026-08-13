@@ -362,7 +362,6 @@
               <option value="">Select…</option>
               <option value="1st">First (1st)</option>
               <option value="2:1">Upper Second (2:1)</option>
-              <option value="other">Other / below 2:1</option>
             </select>
           </div>
 
@@ -417,7 +416,7 @@
     function scoreDegree(c){
       const v = norm(c).replace(/\s/g,"");
       if (["FIRST","1ST","ONE"].includes(v)) return 40;
-      if (["2:1","21","UPPERSECOND","UPPERSECONDCLASS","UPPER"].includes(v)) return 35;
+      if (["2:1","21","UPPERSECOND","UPPERSECONDCLASS","UPPER"].includes(v)) return 36;
       return 0;
     }
 
